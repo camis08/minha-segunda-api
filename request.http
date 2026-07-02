@@ -1,0 +1,8 @@
+POST localhost:5000/tarefas
+Content-Type: application/json
+
+{
+  "titulo": "Minha Tarefa",
+  "descricao": "Inserindo Seg. Tarefa via POST",
+  "concluida" : true
+}
