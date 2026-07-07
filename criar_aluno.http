@@ -1,0 +1,7 @@
+POST localhost:5000/alunos
+Content-Type: application/json
+
+{
+  "nome": "Joao pe de feijao",
+  "curso": "Plantacao de feijao "
+}

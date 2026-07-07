@@ -1,0 +1,8 @@
+PUT localhost:5000/tarefas/1
+Content-Type: application/json
+
+{
+  "titulo": "bla bla bla cvl aa",
+  "descricao": "alteracao feito pelo metodo put ",
+  "concluida": true
+}
