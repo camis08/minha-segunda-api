@@ -2,7 +2,16 @@ POST localhost:5000/tarefas
 Content-Type: application/json
 
 {
-  "titulo": "A primeira tarefa sendo feita",
-  "descricao": "Insercao de tarefa ",
+  "titulo": "Inserindo primeira tarefa ",
+  "descricao": "Tarefa sendo inserida no BD",
   "concluida": true
+}
+
+###
+POST localhost:5000/alunos
+Content-Type: application/json
+
+{
+  "nome" : "bosta",
+  "curso" : "vida que segue"
 }

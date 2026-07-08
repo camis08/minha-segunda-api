@@ -1,13 +1,18 @@
 from flask import Flask, jsonify, request
-from models import db, Tarefas
-from models import db, Alunos
+from models import db, Alunos, Tarefas
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # configuracao url da base de dados
+#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False             # modificacao automatica desativada
 
-
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'  # configuracao url da base de dados
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False             # modificacao automatica desativada
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
@@ -152,32 +157,133 @@ def excluir_tarefas(id_tarefa):
 
     return jsonify({"status": "Tarefa deletada"}), 200
 
-## ALUNOS
+"""
+Criar Classe Alunos models.py
+Depois:
 
+1- Criar rota GET alunos
+2- Criar rota POST alunos
+3- Criar rota POST alunos
+4- Criar rota PUT alunos
+5- Criar rota PATCH alunos
+6- Criar rota DELETE alunos
+"""
 
 @app.route('/alunos' , methods=['POST'])
 def criar_aluno():
-    data = request.get_json()
-    if not data:
+    dados = request.get_json()
+
+    if not dados:
         return jsonify({"erro": "nenhum dado foi enviado"}),400
 
-    campos_obrigatorio = ["nome", "curso"]
+    campos_obrigatorios = ["nome", "curso"]
 
-    for campo in campos_obrigatorio:
-        if campo not in data:
+    for campo in campos_obrigatorios:
+        if campo not in dados:
             return jsonify({
                 "erro": f"O campo {campo} eh obrigatorio"
             }), 400
 
     novo_aluno = Alunos(
-        nome=data['nome'],
-        curso=data['curso']
+        nome=dados['nome'],
+        curso=dados['curso']
     )
 
     db.session.add(novo_aluno)
     db.session.commit()
 
     return jsonify(novo_aluno.to_dict()), 201
+
+@app.route('/alunos', methods=['GET'])
+def listar_alunos():
+
+    #criar a consulta:
+    consulta = db.select(Alunos).order_by(Alunos.id)
+
+    resultado = db.session.execute(consulta)
+
+    alunos = resultado.scalars().all()
+
+    lista_alunos = []
+
+    for aluno in alunos:
+        lista_alunos.append(aluno.to_dict())
+
+    return jsonify(lista_alunos), 200
+
+ 
+@app.route('/alunos/<int:id_alunos>' , methods=['GET'])
+def buscar_alunos(id_alunos):
+    aluno = db.session.get(Alunos, id_alunos)
+
+    if aluno is None:
+        return jsonify({"erro": "Aluno nao encontrado"}),404
+
+    return jsonify(aluno.to_dict()), 200
+
+
+@app.route('/alunos/<int:id_aluno>', methods=['PUT'])
+def atualizar_aluno(id_aluno):
+    dados = request.get_json()
+
+    if not dados:
+        return jsonify({"erro": "Nenhum dado foi enviado"}), 400
+
+    aluno = db.session.get(Alunos, id_aluno)
+
+    if aluno is None:
+        return jsonify({"erro": "Aluno não encontrado"}), 404
+
+    campos_obrigatorios = ["nome", "curso"]
+
+    for campo in campos_obrigatorios:
+        if campo not in dados:
+            return jsonify({"erro": f"O campo {campo} é obrigatório"}), 400
+
+    try:
+        aluno.nome = dados["nome"]
+        aluno.curso = dados["curso"]
+
+        db.session.commit()
+
+        return jsonify(aluno.to_dict()), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"erro": str(e)}), 400
+
+
+@app.route('/alunos/<int:id_aluno>', methods=['PATCH'])
+def alterar_alunos(id_aluno):
+    dados = request.get_json()
+
+    if not dados:
+        return jsonify({"erro": "Nenhum dado foi enviado"}), 400
+
+    aluno = db.session.get(Alunos, id_aluno)
+
+    if aluno is None:
+        return jsonify({"erro": "Aluno nao encontrado"}), 404
+    if "nome" in dados:
+        aluno.nome = dados["nome"]
+    if "curso" in dados:
+        aluno.curso = dados["curso"]
+
+    db.session.commit()
+    return jsonify(aluno.to_dict()), 200
+
+
+@app.route ('/alunos/<int:id_aluno>', methods=['DELETE'])
+def excluir_alunos(id_aluno):
+    aluno = db.session.get(Alunos, id_aluno)
+    if aluno is None:
+        return jsonify({"erro": "Aluno nao encontrado"}), 404
+
+    db.session.delete(aluno)
+    db.session.commit()
+
+    return jsonify({"status": "Aluno deletado!"}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

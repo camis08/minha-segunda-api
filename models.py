@@ -16,7 +16,9 @@ class Tarefas(db.Model):
             'descricao':self.descricao,
             'concluida':self.concluida
         }
-db = SQLAlchemy()
+
+
+
 class Alunos(db.Model):
     __tablename__ = 'alunos'
     id = db.Column(db.Integer, primary_key=True)
