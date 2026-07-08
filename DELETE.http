@@ -1,1 +1,2 @@
-DELETE localhost:5000/tarefas/5
+DELETE localhost:5000/alunos/14
+

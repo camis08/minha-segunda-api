@@ -1,0 +1,6 @@
+PATCH localhost:5000/alunos/13
+Content-Type: application/json
+
+    {
+        "curso": "misericordia"
+    }

@@ -1,0 +1,2 @@
+GET localhost:5000/alunos
+Accept: application/json

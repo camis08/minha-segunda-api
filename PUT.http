@@ -1,8 +1,7 @@
-PUT localhost:5000/tarefas/1
+PUT localhost:5000/alunos/1
 Content-Type: application/json
 
 {
-  "titulo": "bla bla bla cvl aa",
-  "descricao": "alteracao feito pelo metodo put ",
-  "concluida": true
+  "curso": "qualquer um",
+  "nome": "outros"
 }
